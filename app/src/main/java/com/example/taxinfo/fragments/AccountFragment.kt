@@ -1,4 +1,4 @@
-package com.example.taxinfo
+package com.example.taxinfo.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
