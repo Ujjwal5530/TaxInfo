@@ -2,6 +2,7 @@ package com.example.taxinfo.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -34,26 +35,31 @@ class RegisterActivity : AppCompatActivity() {
             val email = binding.email.text.toString()
             val phone = binding.phone.text.toString()
             val password = binding.password.text.toString()
-            val id = firebaseAuth.currentUser?.uid.toString()
+            val id = firebaseFirestore.collection("Users").document(email).id
 
             if (name.isNotEmpty() && email.isNotEmpty()
                 && phone.isNotEmpty() && password.isNotEmpty()){
+
                 firebaseAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            firebaseFirestore
-                                .collection("Users")
-                                .add(UserData(name, email, phone,id))
+                    .addOnCompleteListener {task->
+                        if (task.isSuccessful) {
+                            firebaseFirestore.collection("Users")
+                                .document(email)
+                                .set((UserData(name, email, phone, id)))
+
+                            firebaseFirestore.collection("Users")
+                                .document(email)
+                                .get().addOnSuccessListener { snapshot ->
+                                    Log.d("UserTag", "${snapshot?.get("name")}")
+                                }
                             startActivity(Intent(this, LoginActivity::class.java))
-                        }
-                        else Toast.makeText(this, it.exception?.localizedMessage.toString()
+
+                        } else Toast.makeText(this, task.exception?.localizedMessage.toString()
                             ,Toast.LENGTH_SHORT).show()
-                } 
+                }
             } else {
                 Toast.makeText(this, "All Fields Required!!", Toast.LENGTH_SHORT).show()
             }
-
         }
-
     }
 }

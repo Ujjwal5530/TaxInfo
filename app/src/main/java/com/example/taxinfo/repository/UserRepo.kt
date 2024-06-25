@@ -9,9 +9,11 @@ class UserRepo {
 
     fun getUserInfo() : UserData {
 
+        var userData = UserData("", "", "", "")
+
         firestore = FirebaseFirestore.getInstance()
 
-        val userData = UserData("", "", "", "")
+
         return userData
     }
 }
