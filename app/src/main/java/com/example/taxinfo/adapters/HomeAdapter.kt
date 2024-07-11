@@ -8,9 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.taxinfo.R
 import com.example.taxinfo.databinding.HomeLayoutBinding
 import com.example.taxinfo.modelClass.TaxDetails
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.Runnable
 
-class HomeAdapter(private val context: Context, private var list : ArrayList<TaxDetails>)
+class HomeAdapter(private val context: Context, private var list : List<TaxDetails>)
     : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+
+        val updateList = Runnable {
+            list = list
+            notifyDataSetChanged()
+        }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater
             .from(context)
@@ -22,6 +29,10 @@ class HomeAdapter(private val context: Context, private var list : ArrayList<Tax
 
         holder.binding.taxType.text = item.taxType
         holder.binding.amount.text = item.amount
+
+        holder.binding.delete.setOnClickListener {
+            val ref =  FirebaseDatabase.getInstance().getReference("Tax Details")
+        }
     }
 
     override fun getItemCount(): Int {
@@ -29,9 +40,6 @@ class HomeAdapter(private val context: Context, private var list : ArrayList<Tax
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
         val binding = HomeLayoutBinding.bind(view)
-
-
     }
 }

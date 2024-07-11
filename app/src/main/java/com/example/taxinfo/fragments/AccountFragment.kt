@@ -7,16 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.example.taxinfo.R
 import com.example.taxinfo.databinding.FragmentAccountBinding
 import com.example.taxinfo.modelClass.TaxDetails
+import com.example.taxinfo.viewmodel.TaxViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
@@ -32,6 +32,7 @@ class AccountFragment : Fragment() {
 
     private var itemSelected : String? = null
 
+    private val viewModel : TaxViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -76,11 +77,12 @@ class AccountFragment : Fragment() {
             val amount = binding.amount.text.toString()
 
             if (itemSelected != null && amount.isNotEmpty()){
-                firebaseDatabase.child(id)
-                    .setValue(TaxDetails(amount, itemSelected)).addOnSuccessListener {child ->
-                        Navigation.findNavController(it).navigate(R.id.action_accountFragment_to_homeFragment)
-                        Toast.makeText(requireContext(), "Tax Details Added", Toast.LENGTH_SHORT).show()
-                    }
+                firebaseDatabase.child(id).setValue(TaxDetails(amount,
+                    itemSelected!!
+                )).addOnSuccessListener { child ->
+                    Navigation.findNavController(it).navigate(R.id.action_accountFragment_to_homeFragment)
+                    Toast.makeText(context, "Tax Details Added", Toast.LENGTH_SHORT).show()
+                }
             } else Toast.makeText(requireContext(), "All Fields Required!!", Toast.LENGTH_SHORT).show()
 
 

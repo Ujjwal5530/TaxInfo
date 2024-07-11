@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.taxinfo.R
 import com.example.taxinfo.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -23,7 +24,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        navController = findNavController(R.id.fragmentContainerView)
+        navController = (supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+                as NavHostFragment).navController
 
 
     }

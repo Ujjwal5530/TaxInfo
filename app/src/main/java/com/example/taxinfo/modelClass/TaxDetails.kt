@@ -1,4 +1,4 @@
 package com.example.taxinfo.modelClass
 
-data class TaxDetails(val amount : String? = null,
-                      val taxType : String? = null)
+data class TaxDetails(val amount : String = " ",
+                      val taxType : String = " ")

@@ -1,19 +1,8 @@
 package com.example.taxinfo.repository
 
-import com.example.taxinfo.modelClass.UserData
-import com.google.firebase.firestore.FirebaseFirestore
+import android.content.Context
+import com.example.taxinfo.modelClass.TaxDetails
 
-class UserRepo {
+interface UserRepo {
 
-    private lateinit var firestore: FirebaseFirestore
-
-    fun getUserInfo() : UserData {
-
-        var userData = UserData("", "", "", "")
-
-        firestore = FirebaseFirestore.getInstance()
-
-
-        return userData
-    }
 }
