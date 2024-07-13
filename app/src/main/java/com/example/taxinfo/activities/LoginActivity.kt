@@ -4,14 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.taxinfo.databinding.ActivityLoginBinding
+import com.example.taxinfo.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.auth.User
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityLoginBinding
     private lateinit var firebaseAuth: FirebaseAuth
+    private val viewModel : UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,16 +30,16 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.password.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()){
-                firebaseAuth.signInWithEmailAndPassword(email,password)
-                    .addOnCompleteListener {
-                        if (it.isSuccessful){
-                            startActivity(Intent(this, MainActivity::class.java))
-                        } else Toast.makeText(this, it.exception?.localizedMessage.toString()
-                            , Toast.LENGTH_SHORT).show()
-                }
+
+                viewModel.loginUser(email, password, this)
+                startActivity(Intent(this, MainActivity::class.java))
             }else{
                 Toast.makeText(this, "All Fields Required!!", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.registerButton.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
 

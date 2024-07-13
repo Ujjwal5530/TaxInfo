@@ -20,13 +20,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //enableEdgeToEdge()
+        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         navController = (supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
                 as NavHostFragment).navController
-
 
     }
 
@@ -38,9 +37,8 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         firebaseAuth = FirebaseAuth.getInstance()
 
-        //
         if (firebaseAuth.currentUser == null){
-            startActivity(Intent(this, RegisterActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }

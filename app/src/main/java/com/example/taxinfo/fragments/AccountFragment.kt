@@ -1,6 +1,8 @@
 package com.example.taxinfo.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +13,12 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.example.taxinfo.R
+import com.example.taxinfo.activities.MainActivity
+import com.example.taxinfo.activities.RegisterActivity
 import com.example.taxinfo.databinding.FragmentAccountBinding
 import com.example.taxinfo.modelClass.TaxDetails
 import com.example.taxinfo.viewmodel.TaxViewModel
+import com.example.taxinfo.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -33,6 +38,7 @@ class AccountFragment : Fragment() {
     private var itemSelected : String? = null
 
     private val viewModel : TaxViewModel by viewModels()
+    private val userViewModel : UserViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,17 +62,31 @@ class AccountFragment : Fragment() {
             }
 
         // Get User email from firestore
-
         firestore = FirebaseFirestore.getInstance()
         firebaseAuth = FirebaseAuth.getInstance()
+        val currentUser = firebaseAuth.currentUser?.uid.toString()
 
-        val currentUser = firebaseAuth.currentUser?.email.toString()
+        userViewModel.getUserData(currentUser)
+        userViewModel.userEmail.observe(viewLifecycleOwner){
+            binding.accEmail.text = it
+        }
 
-        firestore.collection("Users")
-            .document(currentUser)
-            .get().addOnSuccessListener {
-                binding.accEmail.text =  it.get("email").toString()
-            }
+        //logout button
+
+        binding.logout.setOnClickListener {
+            userViewModel.logout()
+            startActivity(Intent(requireContext(), MainActivity::class.java))
+        }
+
+
+//        val currentUser = firebaseAuth.currentUser?.email.toString()
+//
+//        firestore.collection("Users")
+//            .document(currentUser)
+//            .get().addOnSuccessListener {
+//                binding.accEmail.text =  it.get("email").toString()
+//            }
+
 
         //Store Tax detail values in realtime database
 
