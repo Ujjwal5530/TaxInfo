@@ -29,11 +29,7 @@ class AccountFragment : Fragment() {
     private var _binding : FragmentAccountBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var firestore : FirebaseFirestore
-
     private lateinit var firebaseAuth: FirebaseAuth
-
-    private lateinit var firebaseDatabase: DatabaseReference
 
     private var itemSelected : String? = null
 
@@ -62,13 +58,13 @@ class AccountFragment : Fragment() {
             }
 
         // Get User email from firestore
-        firestore = FirebaseFirestore.getInstance()
+
         firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid.toString()
 
         userViewModel.getUserData(currentUser)
-        userViewModel.userEmail.observe(viewLifecycleOwner){
-            binding.accEmail.text = it
+        userViewModel.user.observe(viewLifecycleOwner){
+            binding.accEmail.text = it.email
         }
 
         //logout button
@@ -79,30 +75,15 @@ class AccountFragment : Fragment() {
         }
 
 
-//        val currentUser = firebaseAuth.currentUser?.email.toString()
-//
-//        firestore.collection("Users")
-//            .document(currentUser)
-//            .get().addOnSuccessListener {
-//                binding.accEmail.text =  it.get("email").toString()
-//            }
-
-
         //Store Tax detail values in realtime database
-
-        firebaseDatabase = FirebaseDatabase.getInstance().getReference("Tax Details")
-        val id = firebaseDatabase.push().key!!
 
         binding.save.setOnClickListener {
             val amount = binding.amount.text.toString()
 
             if (itemSelected != null && amount.isNotEmpty()){
-                firebaseDatabase.child(id).setValue(TaxDetails(amount,
-                    itemSelected!!
-                )).addOnSuccessListener { child ->
-                    Navigation.findNavController(it).navigate(R.id.action_accountFragment_to_homeFragment)
-                    Toast.makeText(context, "Tax Details Added", Toast.LENGTH_SHORT).show()
-                }
+                viewModel.addTaxDetails(TaxDetails(amount, itemSelected!!, "", currentUser))
+                Navigation.findNavController(it).navigate(R.id.action_accountFragment_to_homeFragment)
+                Toast.makeText(context, "Tax Details Added", Toast.LENGTH_SHORT).show()
             } else Toast.makeText(requireContext(), "All Fields Required!!", Toast.LENGTH_SHORT).show()
 
 
@@ -111,7 +92,6 @@ class AccountFragment : Fragment() {
         binding.cancel.setOnClickListener {
             Navigation.findNavController(it).navigate(R.id.action_accountFragment_to_homeFragment)
         }
-
 
         return binding.root
     }

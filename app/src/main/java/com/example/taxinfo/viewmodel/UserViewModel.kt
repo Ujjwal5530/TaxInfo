@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.taxinfo.modelClass.TaxDetails
 import com.example.taxinfo.modelClass.UserData
 import com.example.taxinfo.repository.UserRepo
 import com.google.firebase.auth.FirebaseAuth
@@ -53,12 +54,18 @@ class UserViewModel(val database : FirebaseFirestore = FirebaseFirestore.getInst
         database.collection("UserInfo").document(user.id).set(user)
     }
 
-    private var _userEmail = MutableLiveData<String>()
-    val userEmail : LiveData<String> get() = _userEmail
+    private var _user = MutableLiveData<UserData>()
+    val user : LiveData<UserData> get() = _user
     fun getUserData(id : String) {
         database.collection("UserInfo").document(id).get().addOnSuccessListener {
-            _userEmail.value = it.get("email").toString()
+            val email = it.get("email").toString()
+            val name = it.get("name").toString()
+            val phone = it.get("phone").toString()
+
+            _user.value = UserData(name, email, phone, id)
+
         }
+
 
     }
 }

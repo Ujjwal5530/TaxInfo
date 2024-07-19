@@ -4,20 +4,16 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taxinfo.R
 import com.example.taxinfo.databinding.HomeLayoutBinding
 import com.example.taxinfo.modelClass.TaxDetails
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.Runnable
+import com.example.taxinfo.viewmodel.TaxViewModel
 
-class HomeAdapter(private val context: Context, private var list : List<TaxDetails>)
+class HomeAdapter(private val context: Context, private var list : ArrayList<TaxDetails>, private val listener : OnDelete)
     : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
 
-        val updateList = Runnable {
-            list = list
-            notifyDataSetChanged()
-        }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater
             .from(context)
@@ -31,7 +27,10 @@ class HomeAdapter(private val context: Context, private var list : List<TaxDetai
         holder.binding.amount.text = item.amount
 
         holder.binding.delete.setOnClickListener {
-            val ref =  FirebaseDatabase.getInstance().getReference("Tax Details")
+            listener.onDeleteListener(item)
+            list.remove(item)
+            notifyItemRemoved(position)
+            Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -42,4 +41,8 @@ class HomeAdapter(private val context: Context, private var list : List<TaxDetai
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = HomeLayoutBinding.bind(view)
     }
+}
+
+interface OnDelete{
+    fun onDeleteListener(taxDetails: TaxDetails)
 }
